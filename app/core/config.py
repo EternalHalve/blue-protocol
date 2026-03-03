@@ -1,3 +1,4 @@
+from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
 
@@ -11,11 +12,18 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "BLUE PROTOCOL"
     PROJECT_VERSION: str = "1.0.0"
 
-    SECRET_KEY: str = ""
+    SECRET_KEY: str
     ALGORITHM: str = "HS256"
 
-    DB_NAME: str = ""
-    DB_URL: str = f"sqlite+aiosqlite:///{BASE_DIR / DB_NAME}"
+    DB_NAME: str = "grass.db"
+    
+    @computed_field
+    @property
+    def DB_URL(self) -> str:
+        """Menghasilkan URL database secara dinamis setelah DB_NAME dibaca dari .env"""
+        return f"sqlite+aiosqlite:///{BASE_DIR / self.DB_NAME}"
 
 
 CONFIG = Settings()
+
+print(f"DEBUG: Database path is {BASE_DIR / CONFIG.DB_NAME}")

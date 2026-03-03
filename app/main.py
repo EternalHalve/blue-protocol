@@ -1,8 +1,21 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 
 from api import grass_finder
+from database.connection import engine, AsyncSessionLocal
+from database.crud import seed_grass
+from database.models.grass_models import Base
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async with AsyncSessionLocal() as session:
+        await seed_grass(session)
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 async def main():
