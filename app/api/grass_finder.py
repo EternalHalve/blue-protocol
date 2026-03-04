@@ -1,23 +1,33 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 import random
 from database.connection import get_db
-from database.crud import create_grass, get_all_grass
-from schemas.grass import GrassBase, GrassResponse
+from database.crud import create_grass, update_grass, get_all_grass
+from schemas.grass import GrassBase, GrassResponse, GrassUpdate
+from database.models.grass_models import Grass
 
 router = APIRouter(prefix="/grass-finder", tags=["grass"])
-
-GRASS_DATABASE = [
-    {"plant": "Wood Sorrel", "location": "Behind Starry Live House", "flavor": "Citrusy, high acidity"},
-    {"plant": "Dandelion Greens", "location": "Shimokitazawa Park", "flavor": "Bitter, like our last ticket sales"},
-    {"plant": "Common Clover", "location": "Under the Chuo Line tracks", "flavor": "Earthy, slightly crunchy"},
-    {"plant": "Moss", "location": "Nijika's backyard (sneaky)", "flavor": "Tastes like damp regret"}
-]
 
 @router.post("/add", response_model=GrassResponse)
 async def add_grass(grass: GrassBase, db: AsyncSession = Depends(get_db)):
     return await create_grass(db, grass)
+
+@router.patch("/update", response_model=GrassResponse)
+async def patch_grass(
+    grass_id: int, 
+    grass_update: GrassUpdate, 
+    db: AsyncSession = Depends(get_db)
+):
+    
+    result = await db.execute(select(Grass).filter(Grass.id == grass_id))
+    db_grass = result.scalars().first()
+
+    if not db_grass:
+        raise HTTPException(status_code=404, detail="Grass not found")
+
+    return await update_grass(db, db_grass, grass_update)
 
 @router.get("/find")
 async def get_grass(db: AsyncSession = Depends(get_db)):
@@ -31,6 +41,7 @@ async def get_grass(db: AsyncSession = Depends(get_db)):
     return {
         "ryo_says": "Life is hard, but the grass is free.",
         "intel": {
+            "id": recommendation.id,
             "plant": recommendation.plant,
             "location": recommendation.location,
             "flavor": recommendation.flavor

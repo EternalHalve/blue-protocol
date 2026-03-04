@@ -14,6 +14,18 @@ async def create_grass(db: AsyncSession, grass_create: GrassBase) -> Grass:
     
     return new_grass
 
+async def update_grass(db: AsyncSession, db_grass: Grass, grass_update: GrassUpdate) -> Grass:
+    update_data = grass_update.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(db_grass, key, value)
+
+    db.add(db_grass)
+    await db.commit()
+    await db.refresh(db_grass)
+
+    return db_grass
+
 async def seed_grass(db: AsyncSession):
     result = await db.execute(select(Grass))
     if not result.scalars().first():
