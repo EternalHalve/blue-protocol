@@ -20,7 +20,6 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def DB_URL(self) -> str:
-        """Menghasilkan URL database secara dinamis setelah DB_NAME dibaca dari .env"""
         return f"sqlite+aiosqlite:///{BASE_DIR / self.DB_NAME}"
 
 

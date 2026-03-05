@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from api import grass_finder
+from core.config import CONFIG
 from database.connection import engine, AsyncSessionLocal
 from database.crud import seed_grass
 from database.models.grass_models import Base
@@ -15,7 +16,12 @@ async def lifespan(app: FastAPI):
         await seed_grass(session)
     yield
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    title=CONFIG.PROJECT_NAME,
+    version=CONFIG.PROJECT_VERSION,
+    description="Grass Finder API",
+    lifespan=lifespan
+)
 
 @app.get("/")
 async def main():
