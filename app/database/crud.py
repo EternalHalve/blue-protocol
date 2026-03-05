@@ -3,6 +3,9 @@ from sqlalchemy.future import select
 
 from schemas.grass import GrassBase, GrassUpdate
 from database.models.grass_models import Grass
+from database.models.users import User
+from schemas.users import UserCreate
+from core.security import get_pass_hash
 
 async def create_grass(db: AsyncSession, grass_create: GrassBase) -> Grass:
     grass_data = grass_create.model_dump() 
@@ -45,3 +48,19 @@ async def seed_grass(db: AsyncSession):
 async def get_all_grass(db: AsyncSession):
     result = await db.execute(select(Grass))
     return result.scalars().all()
+
+async def get_user_by_username(db: AsyncSession, username: str):
+    result = await db.execute(select(User).where(User.username == username))
+    return result.scalars().first()
+
+async def create_user(db: AsyncSession, user_in: UserCreate):
+    hashed_password = get_pass_hash(user_in.password)
+    db_user = User(
+        username=user_in.username,
+        email=user_in.email,
+        hashed_password=hashed_password
+    )
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
