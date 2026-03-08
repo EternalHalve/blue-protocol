@@ -5,7 +5,7 @@ from typing import Annotated
 
 from database.connection import get_db
 from schemas.users import UserCreate, UserResponse, Token
-from database.crud import get_user_by_username, create_user
+from database.crud.users_crud import get_user_by_username, create_user
 from core.security import verify_pass, create_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])

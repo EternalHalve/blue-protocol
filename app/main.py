@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from api import grass_finder, auth
 from core.config import CONFIG
 from database.connection import engine, AsyncSessionLocal
-from database.crud import seed_grass
+from database.crud.grass_crud import seed_grass
 from database.base import Base
 
 

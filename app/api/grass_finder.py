@@ -5,7 +5,7 @@ from typing import Annotated
 
 import random
 from database.connection import get_db
-from database.crud import create_grass, update_grass, get_all_grass, delete_grass
+from database.crud.grass_crud import create_grass, update_grass, get_all_grass, delete_grass
 from schemas.grass import GrassBase, GrassResponse, GrassUpdate
 from database.models.grass_models import Grass
 from database.models.users import User
