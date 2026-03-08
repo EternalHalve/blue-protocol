@@ -8,7 +8,7 @@ from database.connection import get_db
 from database.crud.grass_crud import (
     create_grass,
     update_grass,
-    get_all_grass,
+    get_random_grass,
     delete_grass,
 )
 from schemas.grass import GrassBase, GrassResponse, GrassUpdate
@@ -17,7 +17,7 @@ from database.models.users import User
 from api.deps import get_current_user
 
 router = APIRouter(
-    prefix="/grass-finder", tags=["grass"], dependencies=[Depends(get_current_user)]
+    prefix="/grass-finder", tags=["grass"],
 )
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
@@ -32,7 +32,7 @@ async def add_grass(
     return await create_grass(db, grass)
 
 
-@router.patch("/update", response_model=GrassResponse)
+@router.patch("/update/{grass_id}", response_model=GrassResponse)
 async def patch_grass(
     grass_id: int,
     grass_update: GrassUpdate,
@@ -62,14 +62,12 @@ async def grass_delete_endpoints(
     return None
 
 
-@router.get("/find")
+@router.get("/find-random")
 async def get_grass(db: Session):
-    all_grass = await get_all_grass(db)
+    recommendation = await get_random_grass(db)
 
-    if not all_grass:
+    if not recommendation:
         return {"ryo_says": "Even the grass is gone... I'm finished."}
-
-    recommendation = random.choice(all_grass)
 
     return {
         "ryo_says": "Life is hard, but the grass is free.",

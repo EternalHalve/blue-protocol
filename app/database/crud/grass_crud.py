@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -24,9 +25,9 @@ async def update_grass(
     for key, value in update_data.items():
         setattr(db_grass, key, value)
 
-    db.add(db_grass)
     await db.commit()
     await db.refresh(db_grass)
+    return db_grass
 
 
 async def delete_grass(db: AsyncSession, db_grass: Grass) -> Grass:
@@ -70,6 +71,7 @@ async def seed_grass(db: AsyncSession):
         print("Database seeded: Ryo's secret menu added.")
 
 
-async def get_all_grass(db: AsyncSession):
-    result = await db.execute(select(Grass))
-    return result.scalars().all()
+async def get_random_grass(db: AsyncSession) -> Grass | None:
+    query = select(Grass).order_by(func.random()).limit(1)
+    result = await db.execute(query)
+    return result.scalars().first()
