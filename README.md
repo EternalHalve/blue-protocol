@@ -25,8 +25,9 @@ The following sectors require a valid Bearer Token:
 
 ### Public Endpoints
 The following sectors are free to access without Bearer Token:
+- `POST /api/auth/register` - Enlist for clearance.
+- `POST /api/auth/login` - Establish secure uplink.
 - `GET /api/grass-finder/find-random` - Seek (randomized) sustenance.
-- `GET /api/grass-finder/mood` - See Ryo mood (don't ask why).
 
 ---
 
