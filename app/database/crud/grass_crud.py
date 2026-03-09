@@ -71,6 +71,10 @@ async def seed_grass(db: AsyncSession):
         print("Database seeded: Ryo's secret menu added.")
 
 
+async def get_grass(db: AsyncSession, grass_id: int) -> Grass | None:
+    return await db.get(Grass, grass_id)
+
+
 async def get_random_grass(db: AsyncSession) -> Grass | None:
     query = select(Grass).order_by(func.random()).limit(1)
     result = await db.execute(query)

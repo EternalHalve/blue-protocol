@@ -20,9 +20,13 @@ Blue Protocol is a high-performance foraging API. It provides a secure infrastru
 ### Locked Endpoints
 The following sectors require a valid Bearer Token:
 - `POST /api/grass-finder/add` - Add new findings.
-- `PATCH /api/grass-finder/update` - Modify existing intel.
-- `DELETE /api/grass-finder/delete/{id}` - Erase the evidence.
-- `GET /api/grass-finder/find` - Seek randomized sustenance.
+- `PATCH /api/grass-finder/update/{grass_id}` - Modify existing intel.
+- `DELETE /api/grass-finder/delete/{grass_id}` - Erase the evidence.
+- `GET /api/grass-finder/find/{grass_id}` - Seek sustenance.
+
+### Public Endpoints
+The following sectors are free to access without Bearer Token:
+- `GET /api/grass-finder/find-random` - Seek (randomized) sustenance.
 - `GET /api/grass-finder/mood` - See Ryo mood (don't ask why).
 
 ---
@@ -37,7 +41,7 @@ cd blue-protocol
 # Create environment and sync dependencies
 uv sync
 
-# setup .env
+# Setup .env
 cp .env.example .env
 
 # Awaken the engine
