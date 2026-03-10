@@ -1,9 +1,11 @@
 <div align="center">
 <h1>𝔅𝔩𝔲𝔢 𝔓𝔯𝔬𝔱𝔬𝔠𝔬𝔩</h1>
 
-✧ ——— Grass Finder Engine ——— ✧
+✧ ——— [View Visual Asset](docs/images/blue_protocol.png) ——— ✧
 
+<p>
 Blue Protocol is a high-performance foraging API. It provides a secure infrastructure for identifying edible flora when the budget for a CS student's has reached absolute zero.
+</p>
 </div>
 
 ---
@@ -47,3 +49,6 @@ cp .env.example .env
 # Awaken the engine
 uv run fastapi dev
 ```
+<p align="center">
+<b>Notice:</b> <i>Blue Protocol is subject to the emotional whims of Ryo Yamada. 1/10 requests may result in total abandonment. Good luck.</i>
+</p>
