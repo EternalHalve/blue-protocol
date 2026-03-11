@@ -5,30 +5,34 @@ import string
 
 
 def validate_password_strength(password: str) -> str:
-    if not any(char.isdigit() for char in password):
-        raise ValueError("Password must contain at least one digit.")
-    if not any(char.isupper() for char in password):
-        raise ValueError("Password must contain at least one uppercase letter.")
-    if not any(char.islower() for char in password):
-        raise ValueError("Password must contain at least one lowercase letter.")
-    if not any(char in string.punctuation for char in password):
-        raise ValueError("Password must contain at least one special character.")
+    checks = [
+        (any(c.isdigit() for c in password), "digit"),
+        (any(c.isupper() for c in password), "uppercase letter"),
+        (any(c.islower() for c in password), "lowercase letter"),
+        (any(c in string.punctuation for c in password), "special character"),
+    ]
+    for passed, entity in checks:
+        if not passed:
+            raise ValueError(
+                f"Security Breach: Password requires at least one {entity}."
+            )
     return password
 
 
-ValidatedPassword = Annotated[
-    str, Field(min_length=8, max_length=128), AfterValidator(validate_password_strength)
-]
 UsernameField = Annotated[
     str,
     Field(
         min_length=3,
         max_length=50,
         pattern="^[a-zA-Z0-9_.-]+$",
-        examples=["johndoe_99"],
+        examples=["maggots"],
     ),
 ]
-PasswordField = Annotated[str, Field(min_length=8, max_length=128)]
+StrongPassword = Annotated[
+    str,
+    Field(min_length=8, max_length=128, examples=["Ryo_Eat_Grass!23"]),
+    AfterValidator(validate_password_strength),
+]
 
 
 class UserBase(BaseModel):
@@ -37,14 +41,13 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: ValidatedPassword
+    password: StrongPassword
 
 
 class UserUpdate(BaseModel):
     username: Optional[UsernameField] = None
     email: Optional[EmailStr] = None
-    password: Optional[ValidatedPassword] = None
-    is_active: Optional[bool] = None
+    password: Optional[StrongPassword] = None
 
 
 class UserResponse(UserBase):
@@ -59,6 +62,7 @@ class UserResponse(UserBase):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
 
 class DeleteAccountConfirmation(BaseModel):
     password: str

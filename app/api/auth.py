@@ -19,7 +19,9 @@ async def register_user(
 ):
     existing_user = await get_user_by_username(db, user_create.username)
     if existing_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
+        raise HTTPException(
+            status_code=400, detail="Mainstream Username: Username already registered."
+        )
 
     return await create_user(db, user_create)
 
@@ -34,7 +36,7 @@ async def login_user(
     if not user or not verify_pass(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Access Denied: Invalid identification or passcode.",
         )
 
     access_token = create_access_token(data={"sub": str(user.id)})

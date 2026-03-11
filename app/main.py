@@ -11,7 +11,7 @@ from database.base import Base
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     if not CONFIG.SECRET_KEY:
-        raise ValueError("SECRET_KEY is not set in the configuration.")
+        raise ValueError("Security Breach: SECRET_KEY is not set in the configuration.")
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -31,7 +31,7 @@ app = FastAPI(
 
 @app.get("/")
 async def main():
-    return {"message": "Goodbye, World"}
+    return {"message": "Goodbye, World."}
 
 
 app.include_router(grass_finder.router, prefix="/api")

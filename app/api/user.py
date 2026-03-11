@@ -11,11 +11,13 @@ from core.security import verify_pass
 
 router = APIRouter(prefix="/users", tags=["user"])
 
+
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_profile(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     return current_user
+
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_profile(
@@ -26,14 +28,14 @@ async def delete_profile(
     if not verify_pass(confirmation.password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect password."
-        ) 
+            detail="Security Breach: Authentication key mismatch.",
+        )
 
     if confirmation.confirm_text != "DELETE MY ACCOUNT":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="CONFIRMATION TEXT: DELETE MY ACCOUNT"
-        ) 
+            detail="Protocol Error: Manual override string must match 'DELETE MY ACCOUNT'.",
+        )
 
     await delete_user(db, current_user)
     return None

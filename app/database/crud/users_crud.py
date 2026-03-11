@@ -21,6 +21,7 @@ async def create_user(db: AsyncSession, user_in: UserCreate):
     await db.refresh(db_user)
     return db_user
 
+
 async def delete_user(db: AsyncSession, db_user: User) -> None:
     await db.delete(db_user)
     await db.commit()
