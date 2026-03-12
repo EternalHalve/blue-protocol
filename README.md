@@ -25,6 +25,7 @@ The following sectors require a valid Bearer Token:
 - `DELETE /api/grass-finder/delete/{grass_id}` - Erase the evidence.
 - `GET /api/grass-finder/find/{grass_id}` - Seek sustenance.
 - `GET /api/user/me` - Look into the mirror.
+- `PATCH /api/user/me` - Reborn anew.
 - `DELETE /api/user/me` - Delete yourself from existence.
 
 ### Public Endpoints
